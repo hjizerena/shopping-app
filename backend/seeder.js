@@ -1,9 +1,8 @@
 
-const mongoose = require('mongoose');
 require('dotenv').config();
 require('colors');
-const users = require("./data/users");
-const products = require("./data/products");
+const {users} = require("./data/users");
+const {products} = require("./data/products");
 const {User} = require("./models/userModel");
 const {Product} = require("./models/productModel");
 const {Order} = require("./models/orderModel");
@@ -22,10 +21,10 @@ const importData = async () => {
       return {...product, user: adminUser}
     });
     await Product.insertMany(sampleProducts);
-    console.log('Data Imported!'.green.inverse)
+    console.log('Data Imported!'.brightGreen.inverse)
     process.exit();
   } catch(e) {
-    console.error(`${error}`.red.inverse);
+    console.error(`${e}`.red.inverse);
     process.exit(1);
   }
 };
@@ -35,10 +34,10 @@ const destroyData = async () => {
     await Order.deleteMany({});
     await Product.deleteMany({});
     await User.deleteMany({});
-    console.log('Data Destroyed!'.magenta.inverse)
+    console.log('Data Destroyed!'.brightBlue.inverse)
     process.exit();
   } catch(e) {
-    console.error(`${error}`.red.inverse);
+    console.error(`${e}`.red.inverse);
     process.exit(1);
   }
 };

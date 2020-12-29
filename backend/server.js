@@ -3,24 +3,39 @@ if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
-const products = require("./data/products");
 const {connectDB} = require("./config/db");
 require('colors');
+const {errorHandler} = require("./middleware/middleware");
+const {notFound} = require("./middleware/middleware");
+const {productRoutes} = require("./routes/productRoutes");
 
 connectDB();
 
+app.use('/api/products', productRoutes);
+
+
 app.get('/', (req, res) => {
-  res.send('API is running');
+  return res.send('API is running');
 });
 
-app.get('/api/products', (req, res) => {
-  res.json(products);
+app.use((req, res, next) => {
+  const err = new Error(`Not Found - ${req.originalUrl}`);
+  res.status(404);
+  return next(err);
 });
 
-app.get('/api/products/:id', (req, res) => {
-  const product = products.find(p => p._id === req.params.id);
-  res.json(product);
+app.use((err, req, res, next) => {
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(statusCode);
+  return res.json({
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? null: err.stack
+  })
 });
+
+app.use(notFound);
+app.use(errorHandler);
+
 
 const port = process.env.PORT;
 
