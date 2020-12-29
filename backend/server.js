@@ -5,7 +5,7 @@ const app = express();
 const path = require('path');
 const products = require("./data/products");
 const {connectDB} = require("./config/db");
-const colors = require('colors');
+require('colors');
 
 connectDB();
 
